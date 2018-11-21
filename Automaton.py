@@ -4,6 +4,7 @@ class Automaton(object):
     the base class of automaton
     """
 
+    # Initialize automaton with given arguments.
     def __init__(self, states, alphabet, transitions, initial_state, final_state):
         self.states = frozenset(states)
         self.alphabet = frozenset(alphabet)
@@ -18,6 +19,20 @@ class Automaton(object):
                self.initial_state == other.initial_state and \
                self.final_states == other.final_states
 
+    # you can use print statement with automaton instance like below.
+    #
+    # >>> dfa = DeterministicFiniteAutomaton(states, ...)
+    # >>> print(dfa)
+    # Automaton
+    #    states          : {0, 1}
+    #    alphabet        : {'1', '0'}
+    #    transitions     :
+	#    0 : {'0': 1, '1': 1}
+	#    1 : {'0': 0, '1': 0}
+	#
+    #    initial_state   : 0
+    #    final_states    : {0}
+    # >>>
     def __repr__(self):
         str_transitions = "\n\t\t\t"
         for key, val in self.transitions.items():
@@ -52,14 +67,14 @@ class DeterministicFiniteAutomaton(Automaton):
         :param input_string:
         :return:
         """
-        state = self.initial_state
+        state = self.initial_state  # set initial state
         for character in input_string:
             if character not in self.alphabet:
                 print("ERROR: %s not in alphabet" % character)
                 return False
             else:
-                state = self.transitions[state][character]
-        return state in self.final_states
+                state = self.transitions[state][character]  # move to next state
+        return state in self.final_states  # if you are in one of final states, the input_string is accepted
 
     def flipped_dfa(self):
         """
@@ -78,8 +93,8 @@ class DeterministicFiniteAutomaton(Automaton):
         return the DFA with the minimized number of states
         :return:
         """
-        marked = set()
-        unmarked = set()
+        marked = set()  # marked is a set of distinguishable pair of states
+        unmarked = set()  # unmarked is a set of not-distinguishable pair of states
         checked = set()
         for p in self.states:
             for q in self.states:
