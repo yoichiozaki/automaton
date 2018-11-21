@@ -130,11 +130,40 @@ class NFAHas010(NFA):
         super().__init__(states, alphabet, transitions, initial_state, final_states)
 
 
+class DFAMinimizeTest(DFA):
+    """
+    check the minimize method works correctly.
+    """
+    tests = {}
+
+    def __init__(self):
+        a, b, c, d, e, f, g, h = range(8)
+        states = {a, b, c, d, e, f, g, h}
+        alphabet = {"0", "1"}
+        transitions = {
+            a: {"0": b, "1": f},
+            b: {"0": g, "1": c},
+            c: {"0": a, "1": c},
+            d: {"0": c, "1": g},
+            e: {"0": h, "1": f},
+            f: {"0": c, "1": g},
+            g: {"0": g, "1": e},
+            h: {"0": g, "1": c}
+        }
+        initial_state = a
+        final_states = {c}
+        before = DFA(states, alphabet, transitions, initial_state, final_states)
+        print(before)
+        after = before.minimized()
+        super().__init__(after.states, after.alphabet, after.transitions, after.initial_state, after.final_states)
+
+
 class AutomatonTest(unittest.TestCase):
     automata = [
         DFAIsLengthEven,
         DFAEndsUpWith00,
         DFAStartsWithOneAndDividableWith5,
+        DFAMinimizeTest,
         NFAEndsUpWith0xxx,
         NFAHas010,
     ]
