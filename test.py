@@ -2,7 +2,7 @@
 
 import unittest
 from Automaton import DeterministicFiniteAutomaton as DFA
-# from Automaton import NonDeterministicFiniteAutomaton as NFA
+from Automaton import NonDeterministicFiniteAutomaton as NFA
 
 
 class IsLengthEven(DFA):
@@ -28,9 +28,32 @@ class IsLengthEven(DFA):
         super().__init__(states, alphabet, transitions, initial_state, final_states)
 
 
+class EndsUpWith00(DFA):
+    """
+    test whether the DFA can accept the input which ends up with 00.
+    """
+    tests = (("00100", True),
+             ("11", False),
+             ("1101000110100100", True))
+
+    def __init__(self):
+        a, b, c = range(3)
+        states = {a, b, c}
+        alphabet = {"0", "1"}
+        transitions = {
+            a: {"0": b, "1": a},
+            b: {"0": c, "1": a},
+            c: {"0": c, "1": a},
+        }
+        initial_state = a
+        final_states = {c}
+        super().__init__(states, alphabet, transitions, initial_state, final_states)
+
+
 class AutomatonTest(unittest.TestCase):
     automata = [
-        IsLengthEven
+        IsLengthEven,
+        EndsUpWith00
     ]
 
     def test_automaton(self):
