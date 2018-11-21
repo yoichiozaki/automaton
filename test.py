@@ -158,6 +158,31 @@ class DFAMinimizeTest(DFA):
         super().__init__(after.states, after.alphabet, after.transitions, after.initial_state, after.final_states)
 
 
+class NFAtoDFAConvertTest(NFA):
+    """
+    check the convert method works correctly.
+    """
+    tests = (("010", True),
+             ("000110", False),
+             ("111111001010", True),
+             ("111101", False),
+             ("1110100110", True))
+
+    def __init__(self):
+        a, b, c, d = range(4)
+        states = {a, b, c, d}
+        alphabet = {"0", "1"}
+        transitions = {
+            a: {"0": {a, b}, "1": {a}},
+            b: {"1": {c}},
+            c: {"0": {d}},
+            d: {"0": {d}, "1": {d}},
+        }
+        initial_state = a
+        final_states = {d}
+        super().__init__(states, alphabet, transitions, initial_state, final_states)
+
+
 class AutomatonTest(unittest.TestCase):
     automata = [
         DFAIsLengthEven,
@@ -166,17 +191,30 @@ class AutomatonTest(unittest.TestCase):
         DFAMinimizeTest,
         NFAEndsUpWith0xxx,
         NFAHas010,
+        NFAtoDFAConvertTest
     ]
 
     def test_automaton(self):
         for automaton in self.automata:
             print(str(automaton).center(70, "-"))
-            instance = automaton()
-            print(instance)
-            for inputs, expected in instance.tests:
-                result = instance.run(inputs)
-                print("%s: %s" % (str(result).ljust(5), inputs))
-                self.assertEqual(expected, result)
+            if automaton != NFAtoDFAConvertTest:
+                instance = automaton()
+                print(instance)
+                for inputs, expected in instance.tests:
+                    result = instance.run(inputs)
+                    print("%s: %s" % (str(result).ljust(5), inputs))
+                    self.assertEqual(expected, result)
+            else:
+                nfa_instance = automaton()
+                print(nfa_instance)
+                dfa_instance = nfa_instance.convert_to_dfa()
+                for inputs, expected in nfa_instance.tests:
+                    nfa_result = nfa_instance.run(inputs)
+                    dfa_result = dfa_instance.run(inputs)
+                    print("NFA %s: %s" % (str(nfa_result).ljust(5), inputs))
+                    print("DFA %s: %s" % (str(dfa_result).ljust(5), inputs))
+                    self.assertEqual(expected, nfa_result)
+                    self.assertEqual(expected, dfa_result)
 
 
 if __name__ == "__main__":
